@@ -1,0 +1,53 @@
+team:
+   name: s202411-proyecto-grupo8
+   members:
+      - user: o.buitragov@uniandes.edu.co
+        percentage: 25
+      - user: ma.ninog12@uniandes.edu.co
+        percentage: 25
+      - user: j.gonzalezg2@uniandes.edu.co
+        percentage: 25
+      - user: w.cuadrosr@uniandes.edu.co
+        percentage: 25
+board: https://github.com/orgs/MISW-4301-Desarrollo-Apps-en-la-Nube/projects/139
+url: 34.49.71.183
+user-management:
+  folder: user_app
+  port: 3000
+  authors:
+    - o.buitragov@uniandes.edu.co
+post-management:
+  folder: post_app
+  port: 3001
+  authors:
+    - ma.ninog12@uniandes.edu.co
+offer-management:
+  folder: offer_app
+  port: 3003
+  authors:
+    - j.gonzalezg2@uniandes.edu.co
+route-management:
+  folder: route_app
+  port: 3002
+  authors:
+    - w.cuadrosr@uniandes.edu.co
+score-management:
+  folder: score_app
+  port: 3004
+  authors:
+    - ma.ninog12@uniandes.edu.co
+rf003:
+  folder: rf003
+  port: 3005
+  authors:
+    - j.gonzalezg2@uniandes.edu.co
+rf004:
+  folder: rf004
+  port: 3006
+  authors:
+    - o.buitragov@uniandes.edu.co
+rf005:
+  folder: rf005
+  port: 3007
+  authors:
+    - w.cuadrosr@uniandes.edu.co

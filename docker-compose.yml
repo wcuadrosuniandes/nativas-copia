@@ -1,0 +1,198 @@
+version: "3.8"
+
+services:
+  user_app:
+    build:
+      context: ./user_app
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "user_db"
+      DB_NAME: "users"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+    ports:
+      - "3000:3000"
+    depends_on:
+      - user_db
+    links:
+      - user_db
+    networks:
+      - user_net
+      - app_net
+  user_db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=users
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - user_net
+  offer_app:
+    build:
+      context: ./offer_app
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "offer_db"
+      DB_NAME: "offers"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      USERS_PATH: http://user_app:3000
+    ports:
+      - "3003:3003"
+    depends_on:
+      - offer_db
+    links:
+      - offer_db
+    networks:
+      - offer_net
+      - app_net
+  offer_db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=offers
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - offer_net
+  route_app:
+    build:
+      context: ./route_app
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "route_db"
+      DB_NAME: "routes"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      USERS_PATH: "http://user_app:3000"
+    ports:
+      - "3002:3002"
+    depends_on:
+      - route_db
+    links:
+      - route_db
+    networks:
+      - route_net
+      - app_net
+  route_db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=routes
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - route_net
+  post_app:
+    build:
+      context: ./post_app
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "post_db"
+      DB_NAME: "posts"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      USERS_PATH: "http://user_app:3000"
+    ports:
+      - "3001:3001"
+    depends_on:
+      - post_db
+    links:
+      - post_db
+    networks:
+      - post_net
+      - app_net
+  post_db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=posts
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - post_net
+  score_app:
+    build:
+      context: ./score_app
+      dockerfile: Dockerfile
+    environment:
+      DB_HOST: "score_db"
+      DB_NAME: "scores"
+      DB_PORT: "5432"
+      DB_USER: "postgres"
+      DB_PASSWORD: "postgres"
+      USERS_PATH: "http://user_app:3000"
+    ports:
+      - "3004:3004"
+    depends_on:
+      - score_db
+    links:
+      - score_db
+    networks:
+      - score_net
+      - app_net
+  score_db:
+    image: postgres
+    environment:
+      - POSTGRES_DB=scores
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+    networks:
+      - score_net
+  rf003_app:
+    build:
+      context: ./rf003
+      dockerfile: Dockerfile
+    environment:
+      USERS_PATH: "http://user_app:3000"
+      ROUTES_PATH: "http://route_app:3002"
+      POSTS_PATH: "http://post_app:3001"
+      SCORES_PATH: "http://score_app:3004"
+    ports:
+      - "3005:3005"
+    networks:
+      - app_net
+  rf004_app:
+    build:
+      context: ./rf004
+      dockerfile: Dockerfile
+    environment:
+      USERS_PATH: "http://user_app:3000"
+      ROUTES_PATH: "http://route_app:3002"
+      OFFERS_PATH: "http://offer_app:3003"
+      POSTS_PATH: "http://post_app:3001"
+      SCORES_PATH: "http://score_app:3004"
+    ports:
+      - "3006:3006"
+    networks:
+      - app_net
+  rf005_app:
+    build:
+      context: ./rf005
+      dockerfile: Dockerfile
+    environment:
+      USERS_PATH: "http://user_app:3000"
+      ROUTES_PATH: "http://route_app:3002"
+      OFFERS_PATH: "http://offer_app:3003"
+      POSTS_PATH: "http://post_app:3001"
+      SCORES_PATH: "http://score_app:3004"
+    ports:
+      - "3007:3007"
+    networks:
+      - app_net
+networks:
+  app_net:
+    driver: bridge
+  user_net:
+    driver: bridge
+  post_net:
+    driver: bridge
+  route_net:
+    driver: bridge
+  offer_net:
+    driver: bridge
+  score_net:
+    driver: bridge
+  rf004_net:
+    driver: bridge

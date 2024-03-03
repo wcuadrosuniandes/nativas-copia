@@ -1,0 +1,341 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: score-app
+  labels:
+    app: score-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: score-app
+  template:
+    metadata:
+      labels:
+        app: score-app
+        gcp-auth-skip-secret: "true"
+    spec:
+      containers:
+        - name: score-app
+          image: us-central1-docker.pkg.dev/native-cloud-uniandes/native-cloud-2024-1/score-app:1.0
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3004
+          env:
+            - name: "DB_HOST"
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: DB_HOST
+            - name: "DB_NAME"
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: USER_DB_NAME
+            - name: "DB_PORT"
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: DB_PORT
+            - name: "DB_USER"
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: DB_USER
+            - name: "DB_PASSWORD"
+              valueFrom:
+                secretKeyRef:
+                  name: appsecrets
+                  key: DB_PASSWORD
+            - name: USERS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: USERS_PATH
+
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: score-health-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3004
+    type: HTTP
+    requestPath: /scores/ping
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: score-app-service
+  annotations:
+    cloud.google.com/backend-config: '{"default": "score-health-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: score-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3004
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf003
+  labels:
+    app: rf003
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf003
+  template:
+    metadata:
+      labels:
+        app: rf003
+        gcp-auth-skip-secret: "true"
+    spec:
+      containers:
+        - name: rf003
+          image: us-central1-docker.pkg.dev/native-cloud-uniandes/native-cloud-2024-1/rf003:1.0
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3005
+          env:
+            - name: USERS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: USERS_PATH
+            - name: ROUTES_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: ROUTES_PATH
+            - name: POSTS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: POSTS_PATH
+
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rf003-health-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3005
+    type: HTTP
+    requestPath: /rf003/ping
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rf003-service
+  annotations:
+    cloud.google.com/backend-config: '{"default": "rf003-health-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: rf003
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3005
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf004
+  labels:
+    app: rf004
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf004
+  template:
+    metadata:
+      labels:
+        app: rf004
+        gcp-auth-skip-secret: "true"
+    spec:
+      containers:
+        - name: rf004
+          image: us-central1-docker.pkg.dev/native-cloud-uniandes/native-cloud-2024-1/rf004:1.0
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3006
+          env:
+            - name: USERS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: USERS_PATH
+            - name: ROUTES_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: ROUTES_PATH
+            - name: OFFERS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: OFFERS_PATH
+            - name: POSTS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: POSTS_PATH
+            - name: SCORES_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: SCORES_PATH
+
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rf004-health-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3006
+    type: HTTP
+    requestPath: /rf004/ping
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rf004-service
+  annotations:
+    cloud.google.com/backend-config: '{"default": "rf004-health-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: rf004
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3006
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rf005
+  labels:
+    app: rf005
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: rf005
+  template:
+    metadata:
+      labels:
+        app: rf005
+        gcp-auth-skip-secret: "true"
+    spec:
+      containers:
+        - name: rf005
+          image: us-central1-docker.pkg.dev/native-cloud-uniandes/native-cloud-2024-1/rf005:1.0
+          resources:
+            requests:
+              memory: "64Mi"
+              cpu: "250m"
+            limits:
+              memory: "128Mi"
+              cpu: "500m"
+          ports:
+            - containerPort: 3007
+          env:
+            - name: USERS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: USERS_PATH
+            - name: ROUTES_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: ROUTES_PATH
+            - name: OFFERS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: OFFERS_PATH
+            - name: POSTS_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: POSTS_PATH
+            - name: SCORES_PATH
+              valueFrom:
+                configMapKeyRef:
+                  name: app-config-map
+                  key: SCORES_PATH
+
+          imagePullPolicy: Always
+
+---
+apiVersion: cloud.google.com/v1
+kind: BackendConfig
+metadata:
+  name: rf005-health-config
+spec:
+  healthCheck:
+    checkIntervalSec: 30
+    port: 3007
+    type: HTTP
+    requestPath: /rf005/ping
+
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: rf005-service
+  annotations:
+    cloud.google.com/backend-config: '{"default": "rf005-health-config"}'
+spec:
+  type: NodePort
+  selector:
+    app: rf005
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 3007

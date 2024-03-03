@@ -1,0 +1,66 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: gateway-ingress
+  labels:
+    name: gateway-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - pathType: Prefix
+        path: /users
+        backend:
+          service:
+            name: user-app-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /routes
+        backend:
+          service:
+            name: route-app-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /posts
+        backend:
+          service:
+            name: post-app-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /offers
+        backend:
+          service:
+            name: offer-app-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /scores
+        backend:
+          service:
+            name: score-app-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /rf003
+        backend:
+          service:
+            name: rf003-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /rf004
+        backend:
+          service:
+            name: rf004-service
+            port: 
+              number: 80
+      - pathType: Prefix
+        path: /rf005
+        backend:
+          service:
+            name: rf005-service
+            port: 
+              number: 80
